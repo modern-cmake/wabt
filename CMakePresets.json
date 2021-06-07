@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "msvc",
+      "displayName": "MSVC",
+      "description": "Default build using MSVC compiler",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_C_FLAGS": "/MP /W3 /WX /wd4018 /wd4056 /wd4244 /wd4267 /wd4275 /wd4311 /wd4146 /wd4756 /wd4800 /EHsc /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS",
+        "CMAKE_CXX_FLAGS": "/MP /W3 /WX /wd4018 /wd4056 /wd4244 /wd4267 /wd4275 /wd4311 /wd4146 /wd4756 /wd4800 /EHsc /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded"
+      }
+    },
+    {
+      "name": "gnu",
+      "displayName": "GNU",
+      "description": "Default build using GNU compiler",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_C_FLAGS": "-Wall -Wextra -Werror -Wno-pointer-to-int-cast -Wno-unused-parameter -Wpointer-arith -Wuninitialized",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -Wno-clobbered -Wno-old-style-cast -Wno-unused-parameter -Wpointer-arith -Wuninitialized"
+      }
+    },
+    {
+      "name": "clang",
+      "displayName": "Clang",
+      "description": "Default build using Clang compiler",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_FLAGS": "-Wall -Wextra -Werror -Wno-unused-parameter -Wpointer-arith -Wuninitialized $env{CFLAGS}",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -Wno-old-style-cast -Wno-unused-parameter -Wpointer-arith -Wuninitialized $env{CXXFLAGS}"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "Clang (ASAN)",
+      "description": "ASAN build using Clang compiler",
+      "inherits": "clang",
+      "environment": {
+        "CFLAGS": "-fsanitize=address -Wno-void-pointer-to-int-cast $penv{CFLAGS}",
+        "CXXFLAGS": "-fsanitize=address $penv{CFLAGS}"
+      }
+    },
+    {
+      "name": "ubsan",
+      "displayName": "Clang (UBSAN)",
+      "description": "UBSAN build using Clang compiler",
+      "inherits": "clang",
+      "cacheVariables": {
+        "CMAKE_C_STANDARD_LIBRARIES": "-lubsan"
+      },
+      "environment": {
+        "CFLAGS": "-fsanitize=undefined -fno-sanitize-recover=all -fsanitize-blacklist=${sourceDir}/ubsan.blacklist -Wno-void-pointer-to-int-cast $penv{CFLAGS}",
+        "CXXFLAGS": "-fsanitize=undefined -fno-sanitize-recover=all -fsanitize-blacklist=${sourceDir}/ubsan.blacklist $penv{CFLAGS}"
+      }
+    },
+    {
+      "name": "emscripten",
+      "displayName": "Emscripten",
+      "description": "Build using Emscripten on Linux",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+        "CMAKE_CROSSCOMPILING_EMULATOR": "$env{EMSDK_NODE}",
+        "CMAKE_C_FLAGS": "-Wall -Wextra -Werror -Wno-unused-parameter -Wpointer-arith -Wuninitialized",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -Wno-old-style-cast -Wno-unused-parameter -Wpointer-arith -Wuninitialized -Wno-format",
+        "CMAKE_EXE_LINKER_FLAGS": "-s NODERAWFS -s SINGLE_FILE -s WASM=0 -Oz -s ALLOW_MEMORY_GROWTH=1"
+      }
+    }
+  ]
+}
